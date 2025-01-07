@@ -95,6 +95,7 @@ else
 	DEFAULT_CN_FILE=./package/emortal/default-settings/files/99-default-settings-chinese
 	if [ -f "$DEFAULT_CN_FILE" ]; then
 		sed -i.bak "/^exit 0/r $GITHUB_WORKSPACE/Scripts/patches/99-default-settings-chinese" $DEFAULT_CN_FILE
+                sed -i '/^exit 0/d' $DEFAULT_CN_FILE && echo "exit 0" >> $DEFAULT_CN_FILE
 		echo "99-default-settings-chinese has been added!"
 	fi
 fi
