@@ -2,7 +2,8 @@
 
 #自定义所有设置
 echo "当前网关IP: $WRT_IP"
-
+# 支持 ** 查找子目录
+shopt -s globstar
 
 #修改默认主题
 sed -i "s/luci-theme-bootstrap/luci-theme-$WRT_THEME/g" $(find ./feeds/luci/collections/ -type f -name "Makefile")
@@ -19,14 +20,29 @@ sed -i "s/hostname='.*'/hostname='$WRT_NAME'/g" $CFG_FILE
 #临时修复luci无法保存的问题
 sed -i "s/\[sid\]\.hasOwnProperty/\[sid\]\?\.hasOwnProperty/g" $(find ./feeds/luci/modules/luci-base/ -type f -name "uci.js")
 
-#调整位置
-sed -i 's/services/system/g' $(find ./feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/ -type f -name "luci-app-ttyd.json")
-sed -i '3 a\\t\t"order": 10,' $(find ./feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/ -type f -name "luci-app-ttyd.json")
-sed -i 's/services/network/g' $(find ./feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/ -type f -name "luci-app-upnp.json")
-sed -i 's/services/nas/g' $(find ./feeds/luci/applications/luci-app-alist/root/usr/share/luci/menu.d/ -type f -name "luci-app-alist.json")
-sed -i 's/services/nas/g' $(find ./feeds/luci/applications/luci-app-alist/root/usr/share/luci/menu.d/ -type f -name "luci-app-alist.json")
-sed -i 's/admin\/status/admin\/vpn/g' $(find ./feeds/luci/protocols/luci-proto-wireguard/root/usr/share/luci/menu.d/ -type f -name "luci-proto-wireguard.json")
 
+
+#调整位置
+# sed -i 's/services/system/g' $(find ./ -type f -path "*/luci-app-ttyd/root/usr/share/luci/menu.d/*" -name "luci-app-ttyd.json")
+# sed -i '3 a\\t\t"order": 10,' $(find ./ -type f -path "*/luci-app-ttyd/root/usr/share/luci/menu.d/*" -name "luci-app-ttyd.json")
+# sed -i 's/services/network/g' $(find ./ -type f -path "*/luci-app-alist/root/usr/share/luci/menu.d/*" -name "luci-app-upnp.json")
+# sed -i 's/services/nas/g' $(find ./ -type f -path "*/luci-app-alist/root/usr/share/luci/menu.d/*" -name "luci-app-alist.json")
+# sed -i 's/admin\/status/admin\/vpn/g' $(find ./ -type f -path "*/luci-proto-wireguard/root/usr/share/luci/menu.d/*" -name "luci-proto-wireguard.json")
+# #移除advancedplus无用功能
+# sed -i '/advancedplus\/advancedset/d' $(find ./ -type f -path "*/luci-app-advancedplus/luasrc/controller/*" -name "advancedplus.lua")
+# sed -i '/advancedplus\/advancedipk/d' $(find ./ -type f -path "*/luci-app-advancedplus/luasrc/controller/*" -name "advancedplus.lua")
+
+#调整位置
+sed -i 's/services/system/g' $(find ./**/luci-app-ttyd/root/usr/share/luci/menu.d/ -type f -name "luci-app-ttyd.json")
+sed -i '3 a\\t\t"order": 10,' $(find ./**/luci-app-ttyd/root/usr/share/luci/menu.d/ -type f -name "luci-app-ttyd.json")
+sed -i 's/services/network/g' $(find ./**/luci-app-upnp/root/usr/share/luci/menu.d/ -type f -name "luci-app-upnp.json")
+sed -i 's/services/nas/g' $(find ./**/luci-app-alist/root/usr/share/luci/menu.d/ -type f -name "luci-app-alist.json")
+sed -i 's/services/nas/g' $(find ./**/luci-app-alist/root/usr/share/luci/menu.d/ -type f -name "luci-app-alist.json")
+sed -i 's/admin\/status/admin\/vpn/g' $(find ./**/luci-proto-wireguard/root/usr/share/luci/menu.d/ -type f -name "luci-proto-wireguard.json")
+
+#移除advancedplus无用功能
+sed -i '/advancedplus\/advancedset/d' $(find ./**/luci-app-advancedplus/luasrc/controller/ -type f -name "advancedplus.lua")
+sed -i '/advancedplus\/advancedipk/d' $(find ./**/luci-app-advancedplus/luasrc/controller/ -type f -name "advancedplus.lua")
 
 WRT_IPPART=$(echo $WRT_IP | cut -d'.' -f1-3)
 # #修复Openvpnserver无法连接局域网和外网问题
@@ -46,18 +62,26 @@ WRT_IPPART=$(echo $WRT_IP | cut -d'.' -f1-3)
 # fi
 
 #修复Openvpnserver 修复ifname语法问题
-if [ -f "./package/feeds/luci/luci-app-openvpn-server/root/etc/uci-defaults/openvpn" ]; then
-    sed -i 's/network\.vpn0\.ifname/network\.vpn0\.device/g' ./package/feeds/luci/luci-app-openvpn-server/root/etc/uci-defaults/openvpn
-    echo "OpenVPN Server has fixed the ifname syntax issue!"
+OPENSERV_UCI_FILES=$(find ./**/luci-app-openvpn-server/root/etc/uci-defaults/ -type f -name "openvpn")
+if [ -n "$OPENSERV_UCI_FILES" ]; then
+    for file in $OPENSERV_UCI_FILES; do
+        sed -i 's/network\.vpn0\.ifname/network\.vpn0\.device/g' $file
+    	echo "OpenVPN Server has fixed the ifname syntax issue!"
+    done
 fi
+
 #修复Openvpnserver默认配置的网关地址与无法多终端同时连接问题
-if [ -f "./package/feeds/luci/luci-app-openvpn-server/root/etc/config/openvpn" ]; then
-    echo "	option duplicate_cn '1'" >> ./package/feeds/luci/luci-app-openvpn-server/root/etc/config/openvpn
-    echo "OpenVPN Server has been fixed to resolve the issue of duplicate connecting!"
-    sed -i "s/192.168.1.1/$WRT_IPPART.1/g" ./package/feeds/luci/luci-app-openvpn-server/root/etc/config/openvpn
-    sed -i "s/192.168.1.0/$WRT_IPPART.0/g" ./package/feeds/luci/luci-app-openvpn-server/root/etc/config/openvpn
-    echo "OpenVPN Server has been fixed the default gateway address!"
+OPENSERV_CONFIG_FILES=$(find ./**/luci-app-openvpn-server/root/etc/config/ -type f -name "openvpn")
+if [ -n "$OPENSERV_CONFIG_FILES" ]; then
+    for file in $OPENSERV_CONFIG_FILES; do
+		echo "	option duplicate_cn '1'" >>  $file
+		echo "OpenVPN Server has been fixed to resolve the issue of duplicate connecting!"
+		sed -i "s/192.168.1.1/$WRT_IPPART.1/g"  $file
+		sed -i "s/192.168.1.0/$WRT_IPPART.0/g"  $file
+		echo "OpenVPN Server has been fixed the default gateway address!"
+    done
 fi
+
 
 echo "CONFIG_PACKAGE_luci=y" >> ./.config
 echo "CONFIG_LUCI_LANG_zh_Hans=y" >> ./.config
@@ -95,7 +119,7 @@ else
 	DEFAULT_CN_FILE=./package/emortal/default-settings/files/99-default-settings-chinese
 	if [ -f "$DEFAULT_CN_FILE" ]; then
 		sed -i.bak "/^exit 0/r $GITHUB_WORKSPACE/Scripts/patches/99-default-settings-chinese" $DEFAULT_CN_FILE
-                sed -i '/^exit 0/d' $DEFAULT_CN_FILE && echo "exit 0" >> $DEFAULT_CN_FILE
+        sed -i '/^exit 0/d' $DEFAULT_CN_FILE && echo "exit 0" >> $DEFAULT_CN_FILE
 		echo "99-default-settings-chinese has been added!"
 	fi
 fi
