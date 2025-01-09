@@ -30,13 +30,18 @@
 
 
 ## 固件下载
-### OWRT: 
+### OWRT 6.6.x: 
 <https://github.com/ftkey/ER1-WRT-CI/releases>
-    
+### LiBwrt 6.12.x: 
+<https://github.com/ftkey/ER1-WRT-CI/releases>
 
     
 ### 固件源码(带NSS) 
-    OWRT: https://github.com/VIKINGYFY/immortalwrt.git 
+#### OWRT
+<https://github.com/VIKINGYFY/immortalwrt.git>
+
+#### LiBwrt
+<https://github.com/LiBwrt/openwrt-6.x.git>
     
 ## 刷机方法:
 ### LibWRT & OWRT & QWRT:
