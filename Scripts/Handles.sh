@@ -4,12 +4,9 @@ PKG_PATH="$GITHUB_WORKSPACE/wrt/package/"
 ls -an $PKG_PATH
 
 #预置HomeProxy数据
-if [ -d *"homeproxy"* ]; then
+HP_PATH=$(find ./ -maxdepth 3 -type d -wholename "*/root/etc/homeproxy")
+if [ -d "$HP_PATH" ]; then
 	HP_RULE="surge"
-	HP_PATH="homeproxy/root/etc/homeproxy"
-        if [ ! -d "$HP_PATH" ]; then
-		HP_PATH="luci-app-homeproxy/root/etc/homeproxy"
-   	fi
 	rm -rf ./$HP_PATH/resources/*
 
 	git clone -q --depth=1 --single-branch --branch "release" "https://github.com/Loyalsoldier/surge-rules.git" ./$HP_RULE/
@@ -64,9 +61,15 @@ if [ -f "$OPENVPN_FILE" ]; then
     sed -i '/INSTALL_CONF/{N;d;}' $OPENVPN_FILE
     cd $PKG_PATH && echo "OpenVPN conflict has been fixed!"
 fi
-
 EASY_RSA_FILE=$(find ../feeds/packages/ -maxdepth 3 -type f -wholename "*/openvpn-easy-rsa/Makefile")
 if [ -f "$EASY_RSA_FILE" ]; then
     sed -i '/vars.example/d' $EASY_RSA_FILE
     cd $PKG_PATH && echo "Easy-RSA conflict has been fixed!"
+fi
+
+#修改argon主题颜色
+ARGON_FILE=$(find ./ -type f -path "*/luci-theme-argon/htdocs/luci-static/argon/css/cascade.css")
+if [ -f "$ARGON_FILE" ]; then
+	sed -i "s/#483d8b/#31a1a1/" $ARGON_FILE
+	echo "theme-argon color has been fixed!"
 fi

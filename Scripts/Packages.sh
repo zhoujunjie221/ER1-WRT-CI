@@ -1,9 +1,8 @@
 #!/bin/bash
 
-#删除软件包
+#删除软件包(全名)
 DELETE_PACKAGE() {
 	local PKG_NAME=$1
-
 	rm -rf $(find ./ ../feeds/luci/ ../feeds/packages/ -maxdepth 3 -type d -iname "$PKG_NAME" -prune)
 }
 #DELETE_PACKAGE "socat"
@@ -11,7 +10,7 @@ DELETE_PACKAGE() {
 #DELETE_PACKAGE "openvpn-easy-rsa"
 #rm -rf ../feeds/packages/net/socat
 
-#安装和更新软件包
+#安装和更新软件包(包含通配符)
 UPDATE_PACKAGE() {
 	local PKG_NAME=$1
 	local PKG_REPO=$2
