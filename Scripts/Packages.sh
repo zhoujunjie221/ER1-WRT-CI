@@ -38,6 +38,7 @@ UPDATE_PACKAGE "vlmcsd" "ftkey/openwrt_pkgs" "main" "pkg"
 UPDATE_PACKAGE "luci-app-advancedplus" "ftkey/openwrt_pkgs" "main" "pkg"
 UPDATE_PACKAGE "luci-app-wolplus" "ftkey/openwrt_pkgs" "main" "pkg"
 UPDATE_PACKAGE "luci-app-onliner" "ftkey/openwrt_pkgs" "main" "pkg"
+UPDATE_PACKAGE "ddns-scripts-aliyun" "ftkey/openwrt_pkgs" "main" "pkg"
 
 if [[ $WRT_REPO != *"immortalwrt"* ]]; then
 	UPDATE_PACKAGE "qmi-wwan" "immortalwrt/wwan-packages" "master" "pkg"
