@@ -4,10 +4,12 @@ PKG_PATH="$GITHUB_WORKSPACE/wrt/package/"
 ls -an $PKG_PATH
 
 #预置HomeProxy数据
-HP_PATH=$(find ./ -maxdepth 3 -type d -wholename "*/root/etc/homeproxy")
-if [ -d "$HP_PATH" ]; then
+if [ -d *"homeproxy"* ]; then
 	HP_RULE="surge"
-	rm -rf ./$HP_PATH/resources/*
+	HP_PATH="homeproxy/root/etc/homeproxy"
+        if [ ! -d "$HP_PATH" ]; then
+		HP_PATH="luci-app-homeproxy/root/etc/homeproxy"
+   	fi
 
 	git clone -q --depth=1 --single-branch --branch "release" "https://github.com/Loyalsoldier/surge-rules.git" ./$HP_RULE/
 	cd ./$HP_RULE/ && RES_VER=$(git log -1 --pretty=format:'%s' | grep -o "[0-9]*")
