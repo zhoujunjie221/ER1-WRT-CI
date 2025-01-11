@@ -55,7 +55,7 @@ if [ -f "$SOCAT_FILE" ]; then
 	cd $PKG_PATH && echo "socat has been fixed!"
 fi
 
-# # 修复 OpenVPN 和 Easy-RSA 配置文件冲突
+#修复 OpenVPN 和 Easy-RSA 配置文件冲突
 OPENVPN_FILE=$(find ../feeds/packages/ -maxdepth 3 -type f -wholename "*/openvpn/Makefile")
 if [ -f "$OPENVPN_FILE" ]; then
     sed -i '/INSTALL_CONF/{N;d;}' $OPENVPN_FILE
@@ -71,5 +71,11 @@ fi
 ARGON_FILE=$(find ./ -type f -path "*/luci-theme-argon/htdocs/luci-static/argon/css/cascade.css")
 if [ -f "$ARGON_FILE" ]; then
 	sed -i "s/#483d8b/#31a1a1/" $ARGON_FILE
-	echo "theme-argon color has been fixed!"
+	cd $PKG_PATH && echo "Theme argon color has been fixed!"
+fi
+#修复ddns日志无法滚动问题
+DDNS_OVERVIEW_FILE=$(find ./ ../feeds/luci/ -type f -path "*/luci-app-ddns/htdocs/luci-static/resources/view/ddns/overview.js")
+if [ -f "$DDNS_OVERVIEW_FILE" ]; then
+	sed -i "s/'textarea', { 'style': 'width:100%;/'textarea', { 'style': 'width:100%; overflow-y:auto;/" $DDNS_OVERVIEW_FILE
+	cd $PKG_PATH && echo "DDNS log display has been fixed!"
 fi
