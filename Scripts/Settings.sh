@@ -125,8 +125,45 @@ else
 fi
 # LiBwrt 6.12不支持qmi
 if [[ $WRT_SOURCE == *"LiBwrt"* ]]; then
-	echo "CONFIG_PACKAGE_kmod-usb-net-qmi-wwan=n" >> ./.config
-	echo "CONFIG_PACKAGE_kmod-usb-net-qmi-wwan-fibocom=n" >> ./.config
- 	echo "CONFIG_PACKAGE_kmod-usb-net-qmi-wwan-quectel=n" >> ./.config
+    echo "CONFIG_PACKAGE_kmod-usb-net-qmi-wwan=n" >> ./.config
+    echo "CONFIG_PACKAGE_kmod-usb-net-qmi-wwan-fibocom=n" >> ./.config
+    echo "CONFIG_PACKAGE_kmod-usb-net-qmi-wwan-quectel=n" >> ./.config
 fi
 
+
+BUILD_DIR=$GITHUB_WORKSPACE/wrt/
+remove_something_nss_kmod() {
+    local ipq_target_path="$BUILD_DIR/target/linux/qualcommax/ipq60xx/target.mk"
+    local ipq_mk_path="$BUILD_DIR/target/linux/qualcommax/Makefile"
+    if [ -f $ipq_target_path ]; then
+        sed -i 's/kmod-qca-nss-drv-eogremgr//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-gre//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-map-t//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-match//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-mirror//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-pvxlanmgr//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-tun6rd//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-tunipip6//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-vxlanmgr//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-macsec//g' $ipq_target_path
+        echo "ipq60xx/target.mk has been fixed!"
+
+    fi
+
+    if [ -f $ipq_mk_path ]; then
+        sed -i '/kmod-qca-nss-crypto/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-eogremgr/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-gre/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-map-t/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-match/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-mirror/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-tun6rd/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-tunipip6/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-vxlanmgr/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-wifi-meshmgr/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-macsec/d' $ipq_mk_path
+        echo "qualcommax/Makefile has been fixed!"
+
+    fi
+}
+remove_something_nss_kmod
