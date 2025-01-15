@@ -70,9 +70,9 @@ if [ -f "$EASY_RSA_FILE" ]; then
 fi
 
 #修改argon主题颜色
-ARGON_FILE=$(find ./ -type f -path "*/luci-theme-argon/htdocs/luci-static/argon/css/cascade.css")
-if [ -f "$ARGON_FILE" ]; then
-	sed -i "s/#483d8b/#31a1a1/" $ARGON_FILE
+ARGON_CSS_FILE=$(find ./ -type f -path "*/luci-theme-argon/htdocs/luci-static/argon/css/cascade.css")
+if [ -f "$ARGON_CSS_FILE" ]; then
+	sed -i "s/#483d8b/#31a1a1/" $ARGON_CSS_FILE
 	cd $PKG_PATH && echo "Theme argon color has been fixed!"
 fi
 #修复ddns日志无法滚动问题
