@@ -75,6 +75,12 @@ if [ -f "$ARGON_CSS_FILE" ]; then
 	sed -i "s/#483d8b/#31a1a1/" $ARGON_CSS_FILE
 	cd $PKG_PATH && echo "Theme argon color has been fixed!"
 fi
+ARGON_BG_FILE=$(find ./ -type f -path "*/luci-theme-argon/htdocs/luci-static/argon/img/bg.webp")
+if [ -f "$ARGON_BG_FILE" ]; then
+	cp $GITHUB_WORKSPACE/Scripts/patches/bg.webp $ARGON_BG_FILE
+	cd $PKG_PATH && echo "Theme argon bg has been fixed!"
+fi
+
 #修复ddns日志无法滚动问题
 DDNS_OVERVIEW_FILE=$(find ./ ../feeds/luci/ -type f -path "*/luci-app-ddns/htdocs/luci-static/resources/view/ddns/overview.js")
 if [ -f "$DDNS_OVERVIEW_FILE" ]; then
