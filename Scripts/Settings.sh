@@ -43,7 +43,8 @@ sed -i 's/admin\/status/admin\/vpn/g' $(find ./**/luci-proto-wireguard/root/usr/
 #移除advancedplus无用功能
 sed -i '/advancedplus\/advancedset/d' $(find ./**/luci-app-advancedplus/luasrc/controller/ -type f -name "advancedplus.lua")
 sed -i '/advancedplus\/advancedipk/d' $(find ./**/luci-app-advancedplus/luasrc/controller/ -type f -name "advancedplus.lua")
-
+sed -i '/^start() {/,/^}$/ { /advancedset/s/^\(.*advancedset.*\)$/#\1/ }' $(find ./**/luci-app-advancedplus/root/etc/ -type f -name "advancedplus")
+ 
 WRT_IPPART=$(echo $WRT_IP | cut -d'.' -f1-3)
 # #修复Openvpnserver无法连接局域网和外网问题
 # if [ -f "./package/network/config/firewall/files/firewall.user" ]; then
